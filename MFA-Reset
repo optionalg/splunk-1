@@ -1,0 +1,2 @@
+OktaClass=StoredEvents eventType=core.user.factor.attempt_fail OktaOrgName=xyz 
+| stats values(requestURI) values(factor) values(os) values(device) values(browser) values(user_agent) count as counter by user
