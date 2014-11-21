@@ -1,0 +1,10 @@
+source=prod OktaClass=PasswordBasedLoginController AND "LoginStatus: INVALID_CREDENTIALS" NOT "mycompany" NOT "primeapp" NOT "rumblies" NOT "rod-ops-mon@servicesource.com" NOT "stkwebalerts" | reltime | rex field=_raw "User: \[(?<username>.*)\] attempted login on domain \[(?<domain>.*)\] from \[(?<sip>.*)\] with result: \[User:(?<uid>.*) LoginStatus: (?<status>.*)\]. \[" 
+| geoip sip 
+| convert ctime(_time) as timer 
+| bucket _time span=1s 
+| sort -_time
+| transaction username domain maxspan=10m
+| where eventcount > 2
+| stats values(eventcount) as No_of_Events values(status) as Login_Status values(sip) as Source_IP values(sip_country_name) as Country dc(sip_country_name) as Country_count values(duration) as Events_within_seconds values(timer) as TimeStamps by domain, username, duration
+| where Country_count > 1
+| where username != "portal" AND username != "svc_solar" AND username != "trainer1@adobe.com" AND username != "trainer5@adobe.com" AND username != "portal@bmc.com" AND username != "patrolalerts@bmc.com" AND username != "alertfoxbox" AND username != "test-rumspot" AND username != "alertfoxwebex" AND username != "pingdom.okta" AND domain != "ok1-ops-mon" AND domain != "ok2-ops-delauth-mon" AND domain != "ok1-ops-delauth-mon" AND domain != "ok2-ops-mon"
