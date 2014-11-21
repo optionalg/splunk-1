@@ -1,0 +1,10 @@
+source=prod OktaClass=PasswordBasedLoginController AND "LoginStatus: UNKNOWN_USER" 
+| rex field=_raw "User: \[(?<username>.*)\] attempted login on domain \[(?<domain>.*)\] from \[(?<sip>.*)\] with result: \[User:(?<uid>.*) LoginStatus: (?<status>.*)\]. \[" 
+| geoip sip 
+| convert ctime(_time) as timer 
+| bucket _time span=1s 
+| sort -_time
+| transaction username domain maxspan=10m
+| where eventcount > 10
+| stats values(sip_country_name) values(sip_city) list(status) as Login_Status values(eventcount) as No_of_Evemts values(username) as Usernames values(duration) as Events_within_seconds by sip,domain
+| sort eventcount
