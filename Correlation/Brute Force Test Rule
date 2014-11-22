@@ -1,0 +1,9 @@
+source=prod OktaClass=PasswordBasedLoginController AND "LoginStatus" NOT "NOT_SPECIFIED" 
+| rex field=_raw "User: \[(?<username>.*)\] attempted login on domain \[(?<domain>.*)\] from \[(?<sip>.*)\] with result: \[User:(?<uid>.*) LoginStatus: (?<status>.*)\]. \[" 
+| convert ctime(_time) as timer 
+| bucket _time span=1s 
+| sort -_time
+| geoip sip 
+| transaction username domain sip maxspan=15m endswith="LoginStatus: LOCKED_OUT" unifyends=t 
+| where eventcount > 5 
+| stats values(eventcount) as No_of_Events values(status) as Login_Status values(sip) as Source_IP values(sip_country_name) as Country values(duration) as Events_within_seconds list(timer) as TimeStamps by domain, username
