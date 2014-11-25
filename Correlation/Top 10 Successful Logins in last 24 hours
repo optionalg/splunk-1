@@ -1,7 +1,7 @@
-source=prod OktaClass=PasswordBasedLoginController AND "LoginStatus: SUCCESS" NOT "mycompany" NOT "primeapp" NOT "rumblies" NOT "rod-ops-mon@servicesource.com" NOT "stkwebalerts" | reltime | rex field=_raw "User: \[(?<username>.*)\] attempted login on domain \[(?<domain>.*)\] from \[(?<sip>.*)\] with result: \[User:(?<uid>.*) LoginStatus: (?<status>.*)\]. \[" 
+source=prod OktaClass=PasswordBasedLoginController AND "LoginStatus: SUCCESS" NOT "mycompany" NOT "primeapp" NOT "rumblies" NOT "rod-ops-mon@servicesource.com" NOT "stkwebalerts" | reltime | rex field=_raw "User: \[(?<username>.*)\] attempted login on domain \[(?<domain>.*)\] from \[(?<sip>.*)\] with result: \[User:(?<uid>.*) LoginStatus: (?<status>.*)\]. \["
 | where domain="okta"
-| geoip sip 
+| geoip sip
 | convert ctime(_time) as timer
-| stats count(status) as counter values by username
+| stats count(status) as counter by username
 | sort counter
-| top 10 counter, username
+| top counter, username
