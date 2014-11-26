@@ -1,0 +1,8 @@
+source=prod OktaClass=PasswordBasedLoginController AND "LoginStatus: SUCCESS" NOT "mycompany" NOT "primeapp" NOT "rumblies" NOT "rod-ops-mon@servicesource.com" NOT "stkwebalerts" | reltime | rex field=_raw "User: \[(?<username>.*)\] attempted login on domain \[(?<domain>.*)\] from \[(?<sip>.*)\] with result: \[User:(?<uid>.*) LoginStatus: (?<status>.*)\]. \[" 
+| geoip sip 
+| where domain=
+| where sip_country_name=
+| convert ctime(_time) as timer 
+| bucket _time span=1s 
+| sort -_time
+| stats values(username) as Usernames values(sip) as Source_IPs by domain, sip_country_name
