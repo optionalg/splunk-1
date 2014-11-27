@@ -1,0 +1,2 @@
+source=prod OktaClass=PasswordBasedLoginController AND OktaLoginStatus=SUCCESS  | rex field=_raw "User: \[(?<username>.*)\] attempted login on domain \[(?<domain>.*)\] from \[(?<sip>.*)\] with result: \[User:(?<uid>.*) LoginStatus: (?<status>.*)\]. \[" 
+| search [inputlookup tor_lookup | fields + sip | return sip]
