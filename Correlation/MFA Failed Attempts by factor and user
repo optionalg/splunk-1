@@ -1,0 +1,1 @@
+OktaClass=StoredEvents eventType=core.user.factor.attempt_fail OktaOrgName=$org$ | stats values(factor) as Factors count by device os browser user
