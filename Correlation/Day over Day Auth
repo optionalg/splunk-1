@@ -1,0 +1,10 @@
+source=prod OktaClass=PasswordBasedLoginController OktaLoginStatus=SUCCESS earliest=-1d@d latest=-0d@d 
+| where OktaDomain="okta"
+| multikv 
+| eval ReportKey="Yesterday" 
+| eval _time=_time+86400
+  | append maxtime=600 [search source=prod OktaClass=PasswordBasedLoginController OktaLoginStatus=SUCCESS earliest=-0d@d latest=now  
+  | where OktaDomain="okta"
+  | multikv 
+  | eval ReportKey="Today"]
+| timechart span=1h count(OktaUser) by ReportKey
