@@ -1,12 +1,11 @@
 source=Prod AND sourcetype=syslog AND process=httpd NOT OktaClass="*" NOT agentVersion="*" NOT OktaAdAgentId="*" AND OktaRequestQueryString ="*" 
  | rex field=_raw "httpd\[(?<pro>.*)\]\: (?<sip>.*) - -"
- | eval XSS=case(match(OktaRequestQueryString, "/*alert*"), "xss-alert",
+ | eval XSS=case(match(OktaRequestQueryString, "/*%3Ealert*"), "xss-alert",
                match(OktaRequestQueryString, "/*\son[a-zA-z].*"), "XSS-on",
                match(OktaRequestQueryString, "javascript:alert"), "XSS-js1",
                match(OktaRequestQueryString, "javascript="), "XSS-js2",
                match(OktaRequestQueryString, "%3Cscript*%3E*"), "XSS-brackets1",
                match(OktaRequestQueryString, "%3C/script*%3E*"), "XSS-brackets2",
-               match(OktaRequestQueryString, "/*%3C[a-zA-Z0-9]*%3E*"), "XSS-brackets3",
                match(OktaRequestQueryString, "/*%3C/[a-zA-Z0-9]*%3E*"), "XSS-brackets4",
                match(OktaRequestQueryString, "/*fromCharCode*"), "XSS-fromCharCode",
                match(OktaRequestQueryString, "/*%3CIMG%20SRC=%22javascript:*"), "XSS-imgsrc",
@@ -15,3 +14,9 @@ source=Prod AND sourcetype=syslog AND process=httpd NOT OktaClass="*" NOT agentV
                match(OktaRequestQueryString, "/*[a-zA-Z]*=%22javascript*"), "XSS-attribute")
 | where XSS!=""
 | table OktaRequestDomain sip OktaRequestQueryString XSS
+
+
+/*
+Promisicious matched removed
+match(OktaRequestQueryString, "/*%3C[a-zA-Z0-9]*%3E*"), "XSS-brackets3", <-- any html tag
+*/
