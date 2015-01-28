@@ -1,0 +1,6 @@
+           match(OktaRequestQueryString, "/on\[a-zA-z\]*=*/"), "XSS-on*",
+                 match(OktaRequestQueryString, "/*javascript:ale*/"), "XSS-on*",
+                 match(OktaRequestQueryString, "/*javascript=*/"), "XSS-on*",
+                 match(OktaRequestQueryString, "/*\<[a-zA-Z]*\>*/"), "XSS-on*",
+                 match(OktaRequestQueryString, "/%3Cscript%3E/"), "XSS-on*",
+                 match(OktaRequestQueryString, "/*%3C[a-zA-Z0-9]*%3E*/"), "XSS-on*"
