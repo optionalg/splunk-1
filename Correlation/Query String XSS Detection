@@ -1,6 +1,10 @@
+source=Prod AND sourcetype=syslog AND process=httpd NOT OktaClass="*" NOT agentVersion="*" NOT OktaAdAgentId="*" AND OktaRequestQueryString ="*" 
+ | rex field=_raw "httpd\[(?<pro>.*)\]\: (?<sip>.*) - -"
+ | eval XSS=case(match(OktaRequestQueryString, "/*alert\(*/"), "XSS-Alert",
            match(OktaRequestQueryString, "/on\[a-zA-z\]*=*/"), "XSS-on*",
                  match(OktaRequestQueryString, "/*javascript:ale*/"), "XSS-on*",
                  match(OktaRequestQueryString, "/*javascript=*/"), "XSS-on*",
                  match(OktaRequestQueryString, "/*\<[a-zA-Z]*\>*/"), "XSS-on*",
                  match(OktaRequestQueryString, "/%3Cscript%3E/"), "XSS-on*",
-                 match(OktaRequestQueryString, "/*%3C[a-zA-Z0-9]*%3E*/"), "XSS-on*"
+                 match(OktaRequestQueryString, "/*%3C[a-zA-Z0-9]*%3E*/"), "XSS-on*")
+| where XSS="*"
