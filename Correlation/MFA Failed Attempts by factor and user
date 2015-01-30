@@ -1,2 +1,15 @@
+OktaClass=StoredEvents eventType=core.user.factor.attempt_fail 
+| stats dc(factor) c(factor) as Factor values(user) values(factor) dc(user) as Users by OktaOrgName
+| eval diff=Factor/Users
+| where diff >= 3
+
+If Factor to Users ratio is more than 3 (For e.g. 3 Users failed more than 9 time / or / 5 users failed more than 15 times)
+
+
+
+/* Older Query without intelligence
+
 OktaClass=StoredEvents eventType=core.user.factor.attempt_fail OktaOrgName=$org$ 
 | stats values(factor) as Factors count by device os browser user
+
+*/
