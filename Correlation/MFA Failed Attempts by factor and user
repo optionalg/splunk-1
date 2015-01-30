@@ -4,7 +4,7 @@ OktaClass=StoredEvents eventType=core.user.factor.attempt_fail
 | where diff >= 3
 
 If Factor to Users ratio is more than 3 (For e.g. 3 Users failed more than 9 time / or / 5 users failed more than 15 times)
-
+Diff can be adjusted to make the rule more strict or loose, as required.
 
 
 /* Older Query without intelligence
