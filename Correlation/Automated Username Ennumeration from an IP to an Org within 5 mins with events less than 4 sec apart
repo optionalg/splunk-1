@@ -4,7 +4,11 @@ source=prod OktaClass=PasswordBasedLoginController AND "LoginStatus: UNKNOWN_USE
 | convert ctime(_time) as timer 
 | bucket _time span=1s 
 | sort -_time
-| transaction username domain maxspan=5m maxpause=4s
+| transaction sip domain maxspan=5m maxpause=4s
 | where eventcount > 5
 | stats values(sip_country_name) values(sip_city) list(status) as Login_Status values(eventcount) as No_of_Evemts values(username) as Usernames values(duration) as Events_within_seconds values(timer) as TimeStamps by sip,domain
 | sort eventcount
+
+
+
+/* transaction sip and domain (instaed of username and domain) */
