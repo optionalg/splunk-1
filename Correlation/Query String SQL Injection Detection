@@ -1,0 +1,17 @@
+source=Prod AND sourcetype=syslog AND process=httpd NOT OktaClass="*" NOT agentVersion="*" NOT OktaAdAgentId="*" AND OktaRequestQueryString ="*" 
+ | rex field=_raw "httpd\[(?<pro>.*)\]\: (?<sip>.*) - -"
+ | eval SQL=case(match(OktaRequestQueryString, "/*1%20OR%201%3D1*"), "sql-1=1",
+               match(OktaRequestQueryString, "/*1%20OR%201=1*"), "sql-1=1",
+               match(OktaRequestQueryString, "1%27%20OR%20%271%27=%271"), "sql-1'='1'",
+               match(OktaRequestQueryString, "1%27%20OR%20%271%27%3D%271"), "sql-1'='1'",
+               match(OktaRequestQueryString, "1%20AND"), "sql-1and",
+               match(OktaRequestQueryString, "\wSELECT\w*"), "sql-select",
+               match(OktaRequestQueryString, "\wWAIT\w*"), "sql-wait",
+               match(OktaRequestQueryString, "fromCharCode*"), "sql-fromCharCode",
+               match(OktaRequestQueryString, "\wEXEC\("), "sql-exec",
+               match(OktaRequestQueryString, "\wDROP\w*"), "sql-drop",
+               match(OktaRequestQueryString, "\wFROM\w*"), "sql-from")
+| where SQL!=""
+| table OktaRequestDomain sip OktaRequestQueryString SQL
+
+/* Very rudimentary Detection - Need to be improved a LOT*/
