@@ -1,4 +1,5 @@
 source="prod" OktaClass=PasswordBasedLoginController "LoginStatus: SUCCESS" 
+    AND user!="delauth"
 | rex field=_raw "User: \[(?<usr>.*)\] attempted login on domain \[(?<domain>.*)\] from \[(?<sip>.*)\] with result:" 
 | geoip sip 
 | stats values(user) as User_Id values(org) as Org_Id values(domain) as Organization dc(org) as Org_count by usr, sip, sip_country_name, sip_city 
