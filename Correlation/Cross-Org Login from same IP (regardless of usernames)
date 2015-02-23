@@ -1,0 +1,8 @@
+source="prod" OktaClass=PasswordBasedLoginController "LoginStatus: SUCCESS" 
+  AND OktaDomain!="ok1-ops-delauth-mon"
+  AND OktaDomain!=ok*-ops*
+| rex field=_raw "User: \[(?<usr>.*)\] attempted login on domain \[(?<domain>.*)\] from \[(?<sip>.*)\] with" 
+| geoip sip 
+| stats dc(domain) as Org_Count values(domain) as Organizations by sip, sip_country_name, sip_city 
+| sort - Org_Count 
+| where Org_Count > 1 AND sip != "208.66.31.146"
