@@ -12,3 +12,14 @@ source=prod OktaClass=PasswordBasedLoginController AND "LoginStatus: UNKNOWN_USE
 
 
 /* transaction sip and domain (instaed of username and domain) */
+
+With StoredEvents
+
+OktaClass=StoredEvents eventType=core.user_auth.login_failed
+| iplocation CLIENT_IP_ADDRESS
+| convert ctime(_time) as timer 
+| bucket _time span=1s 
+| sort -_time
+| transaction CLIENT_IP_ADDRESS org maxspan=5m maxpause=4s
+| where eventcount > 3
+| stats values(CLIENT_IP_ADDRESS) values(City) values(Country) list(OktaLoginStatus) values(eventcount) values(okta_username) values(duration) values(timer) by CLIENT_IP_ADDRESS, org
