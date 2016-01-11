@@ -1,0 +1,6 @@
+source=preview bugcrowd- OktaClass=PasswordBasedLoginController 
+| rex field=_raw "LoginStatus: (?<LoginStatus>.*) \[ r"
+| convert ctime(_time) as timer
+| stats values(ip) as IP values(LoginStatus) c(LoginStatus) as LoginCount latest(timer) as LatestTime by domain
+
+/* Alert to check weekly activity on BugCrowd test orgs */
