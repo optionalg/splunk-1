@@ -1,0 +1,5 @@
+OktaClass=StoredEvents eventType=core.user_auth.login_success OktaOrgName=okta
+| iplocation CLIENT_IP_ADDRESS
+| where Country!="United States"
+| convert ctime(_time) as timer
+| table OktaOrgName okta_username CLIENT_IP_ADDRESS Country City timer
