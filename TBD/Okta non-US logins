@@ -1,0 +1,10 @@
+
+source=prod OktaClass=StoredEvents eventType=core.user_auth.login_success OktaOrgName=okta
+| iplocation CLIENT_IP_ADDRESS
+| where Country!="United States"
+| convert ctime(_time) as timer
+| table OktaOrgName okta_username CLIENT_IP_ADDRESS Country City timer
+
+Verify with workday list of non-us employees + Contractors or Static XLS: https://wd5.myworkday.com/osv_okta/d/gateway.htmld#%3Bosv_okta%3Bgateway.htmld%3Fx%3D17f317850458dd30f670ea9314d189a39b12b6921c902a9460962e681bb68621
+
+https://es-okta.splunkcloud.com/en-US/app/search/search?sid=1452555184.631473
