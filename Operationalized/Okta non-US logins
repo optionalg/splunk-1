@@ -8,3 +8,8 @@ source=prod OktaClass=StoredEvents eventType=core.user_auth.login_success OktaOr
 Verify with workday list of non-us employees + Contractors or Static XLS: https://wd5.myworkday.com/osv_okta/d/gateway.htmld#%3Bosv_okta%3Bgateway.htmld%3Fx%3D17f317850458dd30f670ea9314d189a39b12b6921c902a9460962e681bb68621
 
 https://es-okta.splunkcloud.com/en-US/app/search/search?sid=1452555184.631473
+
+Process:
+1 - run report every day
+2 - check against the list
+3 - if not present in the list, send e-mail to them (CC manager)
