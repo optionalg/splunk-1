@@ -11,6 +11,11 @@ source=prod OktaClass=StoredEvents eventType=core.user_auth.login_success OktaOr
     AND (okta_username!="vadym.pykhalov@okta.com" AND Country!="Ukraine")
     AND (okta_username!="vdobrikov@okta.com" AND Country!="Ukraine")
     AND (okta_username!="yunaly.krestyanov@okta.com" AND Country!="Ukraine")
+    AND (okta_username!="dave.blayney@okta.com" AND Country!="United Kingdom")
+    AND (okta_username!="" AND Country!="")
+    AND (okta_username!="" AND Country!="")
+    AND (okta_username!="" AND Country!="")
+    AND (okta_username!="" AND Country!="")
 | convert ctime(_time) as timer
 | stats values(CLIENT_IP_ADDRESS) values(Country) values(City) values(timer) by okta_username
 
