@@ -1,0 +1,5 @@
+sourcetype="aws:s3"
+| rex field=_raw "\"(?<timestamp>.*)\",\"(?<GranIdent>.*)\",\"(?<identities>.*)\",\"(?<iip>.*)\",\"(?<eip>.*)\",\"(?<action>.*)\",\"(?<querytype>.*)\",\"(?<rescode>.*)\",\"(?<domain>.*)\",\"(?<cat>.*)\""
+| where action!="Allowed"
+| where cat!=""
+| stats c(GranIdent) as Identity values(domain) as Domain values(action) as Action_Taken values(cat) as Category by GranIdent
