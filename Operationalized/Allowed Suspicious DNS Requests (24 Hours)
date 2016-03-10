@@ -1,0 +1,5 @@
+sourcetype="aws:s3" NOT "atko" NOT "saasure"
+| rex field=_raw "\"(?<timestamp>.*)\",\"(?<GranIdent>.*)\",\"(?<identities>.*)\",\"(?<iip>.*)\",\"(?<eip>.*)\",\"(?<action>.*)\",\"(?<querytype>.*)\",\"(?<rescode>.*)\",\"(?<domain>.*)\",\"(?<cat>.*)\""
+| where action="Allowed"
+| where cat="Suspicious Response"
+| stats values(action) as Action values(GranIdent) as Identity c(GranIdent) as count by domain
