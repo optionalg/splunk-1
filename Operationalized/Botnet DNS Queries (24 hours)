@@ -1,0 +1,4 @@
+sourcetype="aws:s3" NOT "atko" NOT "saasure"
+| rex field=_raw "\"(?<timestamp>.*)\",\"(?<GranIdent>.*)\",\"(?<identities>.*)\",\"(?<iip>.*)\",\"(?<eip>.*)\",\"(?<action>.*)\",\"(?<querytype>.*)\",\"(?<rescode>.*)\",\"(?<domain>.*)\",\"(?<cat>.*)\""
+| where cat="Enterprise Botnet"
+| stats values(domain) as Domain values(action) as Action c(GranIdent) as Count by GranIdent
